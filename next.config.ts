@@ -3,6 +3,8 @@ import { fileURLToPath } from "node:url";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Self-contained production build (.next/standalone) used by the host entry point app.js.
+  output: "standalone",
   turbopack: {
     root: path.dirname(fileURLToPath(import.meta.url)),
   },

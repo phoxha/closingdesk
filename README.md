@@ -25,8 +25,13 @@ Uploaded files and the matter database are encrypted at rest (AES-256-GCM). Keys
 - `CLOSINGDESK_SESSION_SECRET`
 - `CLOSINGDESK_FILE_KEY`
 - `CLOSINGDESK_ATTORNEY_PASSWORD`
+- `CLOSINGDESK_DATA_DIR` to an absolute folder outside the web root
 
 See `.env.example`. `CLOSINGDESK_RETENTION_DAYS` deletes stored documents older than that many days.
+
+## Server
+
+`next build` writes a self-contained server to `.next/standalone`. On the host, the Node.js startup file is `app.js`. It loads the live `.env` beside that file, then starts the standalone server. Put the same values in the host environment or in that `.env`. Do not commit `.env`.
 
 `db/schema.sql` is the PostgreSQL shape for the same entities (users, matters, documents, versions, extracted terms, comparison runs, findings, attorney reviews, audit events). The running app uses the encrypted file store so it works without a database server.
 

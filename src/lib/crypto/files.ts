@@ -4,6 +4,7 @@ import path from "path";
 
 const MAGIC = Buffer.from("CD01");
 
+/** Encrypted matter store. Set CLOSINGDESK_DATA_DIR in production: the standalone server runs from .next/standalone, which the web process may not be allowed to write to. */
 export function dataDir(): string {
   return process.env.CLOSINGDESK_DATA_DIR?.trim() || path.join(process.cwd(), "data");
 }
