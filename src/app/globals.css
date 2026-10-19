@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #efeae2;
+  --ink: #1a211c;
+  --panel: #f7f4ee;
+  --line: #ddd4c6;
+  --sidebar: #1b2420;
+  --muted: #5e675f;
+  --copper: #9a4524;
+  --forest: #1d6a45;
+  --moss: #2f6f5e;
+  --amber: #8a5a12;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-sidebar: var(--sidebar);
+  --color-muted: var(--muted);
+  --color-copper: var(--copper);
+  --color-forest: var(--forest);
+  --color-moss: var(--moss);
+  --color-amber: var(--amber);
+  --font-sans: var(--font-source);
+  --font-serif: var(--font-newsreader);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-source), "Source Sans 3", Georgia, sans-serif;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  outline-color: var(--copper);
+}
+
+::selection {
+  background: #ead7c8;
+}
