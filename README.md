@@ -14,7 +14,7 @@ npm run dev
 
 Open http://localhost:3000 and sign in. In local development the attorney account is:
 
-`vitaliy@closingdesk.local` / `harbor-pine`
+`vitaliy@yusenkolaw.com` / `harbor-pine`
 
 Use **Load sample** for a transaction whose purchase agreement changes the price words into an equivalent amount, moves the closing date, changes the deposit and financing, drops the inspection and appraisal, and adds an assignment clause.
 

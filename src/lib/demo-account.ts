@@ -1,4 +1,4 @@
-export const DEMO_EMAIL = "vitaliy@closingdesk.local";
+export const DEMO_EMAIL = "vitaliy@yusenkolaw.com";
 export const DEMO_NAME = "Vitaliy";
 export const DEMO_PASSWORD = "harbor-pine";
 

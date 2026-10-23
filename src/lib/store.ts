@@ -84,7 +84,14 @@ async function readFromDisk(): Promise<Database> {
 }
 
 function seed(db: Database): boolean {
-  if (db.users.length > 0) return false;
+  const email = attorneyEmail();
+  const previous = db.users.find((user) => user.email === "vitaliy@closingdesk.local");
+  let changed = false;
+  if (previous && !db.users.some((user) => user.email === email)) {
+    previous.email = email;
+    changed = true;
+  }
+  if (db.users.length > 0) return changed;
   const password = attorneyPassword();
   if (!password) return false;
   db.users.push({

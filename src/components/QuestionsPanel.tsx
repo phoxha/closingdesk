@@ -60,7 +60,7 @@ export function QuestionsPanel({
           <p className="text-xs leading-5 text-muted">
             Ask about the accepted offer, the purchase agreement, or this review. Answers stay with the transaction and are not a legal determination.
           </p>
-          <div className="mt-2 max-h-64 space-y-3 overflow-auto">
+          <div className="mt-2 space-y-3">
             {questions.length === 0 ? <p className="text-sm text-muted">No questions yet.</p> : null}
             {questions.map((item) => (
               <article key={item.id} className="rounded-md border border-line bg-white px-3 py-2">

@@ -113,6 +113,7 @@ export function ReviewDesk({
   const [pane, setPane] = useState<"offer" | "psa">("offer");
   const [reviewOpen, setReviewOpen] = useState(true);
   const [summaryOpen, setSummaryOpen] = useState(true);
+  const [documentsOpen, setDocumentsOpen] = useState(true);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -192,7 +193,7 @@ export function ReviewDesk({
           </a>
         </div>
       </header>
-      <div className="max-h-[42vh] shrink-0 overflow-y-auto">
+      <div className={`min-h-0 overflow-y-auto ${documentsOpen ? "max-h-[40%] shrink" : "flex-1"}`}>
       <SummaryCompare
         open={summaryOpen}
         conflicts={summaryConflicts}
@@ -201,7 +202,7 @@ export function ReviewDesk({
         onToggle={() => setSummaryOpen((open) => !open)}
         onSelect={(id) => setSelectedId(id)}
       />
-      <section className={`border-b border-line bg-panel ${reviewOpen ? "max-h-80 overflow-y-auto" : ""}`}>
+      <section className="border-b border-line bg-panel">
         {reviewOpen ? (
           <>
             <div className="flex flex-wrap items-start justify-between gap-3 px-5 py-3">
@@ -313,45 +314,72 @@ export function ReviewDesk({
       </section>
       <QuestionsPanel matterId={matterId} runId={runId} initialQuestions={initialQuestions} selectedTitle={selected?.title ?? null} />
       </div>
-      <div className="flex shrink-0 gap-2 border-b border-line px-5 py-2 xl:hidden">
-        {(
-          [
-            ["offer", "Offer"],
-            ["psa", "PSA"],
-          ] as const
-        ).map(([id, label]) => (
+      <section className={`flex flex-col border-t border-line bg-panel ${documentsOpen ? "min-h-0 flex-1" : "shrink-0"}`}>
+        <div className="flex shrink-0 items-center justify-between gap-3 px-5 py-2">
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold">Documents</h2>
+            <p className="truncate text-xs text-muted">
+              {offerDoc?.filename ?? "No accepted offer"}
+              {" · "}
+              {psaDoc?.filename ?? "No purchase agreement"}
+            </p>
+          </div>
           <button
-            key={id}
             type="button"
-            onClick={() => setPane(id)}
-            className={`rounded-md px-3 py-1 text-sm ${pane === id ? "bg-sidebar text-white" : "bg-panel"}`}
+            onClick={() => setDocumentsOpen((open) => !open)}
+            aria-expanded={documentsOpen}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-line bg-paper px-2 py-1 text-xs"
           >
-            {label}
+            <svg viewBox="0 0 20 20" className={`h-3.5 w-3.5 transition-transform ${documentsOpen ? "" : "rotate-180"}`} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M4.5 7.5 10 13l5.5-5.5" />
+            </svg>
+            {documentsOpen ? "Hide documents" : "Show documents"}
           </button>
-        ))}
-      </div>
-      <div className="grid min-h-64 flex-1 grid-cols-1 xl:grid-cols-2">
-        <DocumentPane
-          key={`offer-${offerDoc?.id ?? "none"}-${selected?.id ?? "none"}`}
-          side="offer"
-          title="Accepted offer"
-          matterId={matterId}
-          document={offerDoc}
-          quote={selected?.offerQuote ?? ""}
-          page={selected?.offerPage ?? null}
-          hidden={pane !== "offer"}
-        />
-        <DocumentPane
-          key={`psa-${psaDoc?.id ?? "none"}-${selected?.id ?? "none"}`}
-          side="psa"
-          title="Purchase agreement"
-          matterId={matterId}
-          document={psaDoc}
-          quote={selected?.psaQuote ?? ""}
-          page={selected?.psaPage ?? null}
-          hidden={pane !== "psa"}
-        />
-      </div>
+        </div>
+        {documentsOpen ? (
+          <>
+            <div className="flex shrink-0 gap-2 border-y border-line px-5 py-2 xl:hidden">
+              {(
+                [
+                  ["offer", "Offer"],
+                  ["psa", "PSA"],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setPane(id)}
+                  className={`rounded-md px-3 py-1 text-sm ${pane === id ? "bg-sidebar text-white" : "bg-paper"}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="grid min-h-0 flex-1 grid-cols-1 xl:grid-cols-2">
+              <DocumentPane
+                key={`offer-${offerDoc?.id ?? "none"}-${selected?.id ?? "none"}`}
+                side="offer"
+                title="Accepted offer"
+                matterId={matterId}
+                document={offerDoc}
+                quote={selected?.offerQuote ?? ""}
+                page={selected?.offerPage ?? null}
+                hidden={pane !== "offer"}
+              />
+              <DocumentPane
+                key={`psa-${psaDoc?.id ?? "none"}-${selected?.id ?? "none"}`}
+                side="psa"
+                title="Purchase agreement"
+                matterId={matterId}
+                document={psaDoc}
+                quote={selected?.psaQuote ?? ""}
+                page={selected?.psaPage ?? null}
+                hidden={pane !== "psa"}
+              />
+            </div>
+          </>
+        ) : null}
+      </section>
     </div>
   );
 }
@@ -413,11 +441,11 @@ function SummaryCompare({
         </button>
       </div>
       {open ? (
-        <div className="max-h-64 overflow-auto px-5 pb-3">
+        <div className="px-5 pb-3">
           {rows.length === 0 ? <p className="text-sm text-muted">No material terms were extracted for this comparison.</p> : null}
           {rows.length > 0 ? (
             <table className="w-full border-collapse text-left text-sm">
-              <thead className="sticky top-0 bg-panel">
+              <thead className="bg-panel">
                 <tr className="border-b border-line text-xs tracking-wide text-muted uppercase">
                   <th className="px-2 py-2 font-medium">Field</th>
                   <th className="px-2 py-2 font-medium">Accepted offer</th>
@@ -526,7 +554,7 @@ function DocumentPane({
   }, [quote, document?.id, side, mode]);
 
   return (
-    <section className={`${hidden ? "hidden" : "flex"} min-h-0 flex-col border-r border-line xl:flex`}>
+    <section className={`${hidden ? "hidden" : "flex"} h-full min-h-0 flex-col overflow-hidden border-r border-line xl:flex`}>
       <div className="flex items-center justify-between gap-2 border-b border-line px-3 py-2">
         <div className="min-w-0">
           <h2 className="text-sm font-semibold">{title}</h2>
