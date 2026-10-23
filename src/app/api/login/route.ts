@@ -8,6 +8,12 @@ function safeNext(value: string): string {
   return value;
 }
 
+// Relative redirect so the browser stays on the public domain
+// (request.url is the internal standalone address behind Plesk).
+function redirectTo(location: string) {
+  return new NextResponse(null, { status: 303, headers: { Location: location } });
+}
+
 export async function POST(request: Request) {
   const form = await request.formData();
   const email = String(form.get("email") ?? "").trim().toLowerCase();
@@ -15,12 +21,11 @@ export async function POST(request: Request) {
   const next = safeNext(String(form.get("next") ?? "/"));
   const user = email ? await findUserByEmail(email) : null;
   if (!user || !verifyPassword(password, user.passwordHash)) {
-    const login = new URL("/login", request.url);
-    login.searchParams.set("error", "1");
-    if (next !== "/") login.searchParams.set("next", next);
-    return NextResponse.redirect(login);
+    const params = new URLSearchParams({ error: "1" });
+    if (next !== "/") params.set("next", next);
+    return redirectTo(`/login?${params.toString()}`);
   }
-  const response = NextResponse.redirect(new URL(next, request.url));
+  const response = redirectTo(next);
   response.cookies.set(SESSION_COOKIE, createSession(user.id), {
     httpOnly: true,
     sameSite: "lax",
